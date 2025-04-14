@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.koo.mapper">
+
+<!-- config.xml이 없으므로 resultType 사용시 패키지명까지 써야함 -->
+<select id="alldata" resultType="kr.co.koo.membership_dto">
+select * from MEMBERSHIP
+</select>
+
+<!-- 하나의 데이터만 출력 -->
+<select id="onedata" resultType="kr.co.koo.membership_dto">
+select * from MEMBERSHIP where MID= #{MID}
+</select>
+
+
+
+
+</mapper>
