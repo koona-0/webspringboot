@@ -37,6 +37,12 @@ public class membership_dao implements membership_service {
 	}
 	
 	
+	@Override
+	public int join_memer(membership_dto dto) {
+		int result = this.mp.save_member(dto);
+		return result;
+	}
+	
 
 
 }

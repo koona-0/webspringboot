@@ -9,5 +9,6 @@ public interface membership_service {
 	public List<membership_dto> alldata();
 //	public List<membership_dto> onedata(String MID);
 
+	int join_memer(membership_dto dto);
 
 }
