@@ -14,7 +14,7 @@ import org.apache.ibatis.annotations.Mapper;
 //	Controller => dao
 @Mapper
 public interface mapper {
-	
+	//@Query("select * from MEMBERSHIP")	이런거로 바로때리기도됨 
 	public List<membership_dto> alldata();
 	public List<membership_dto> onedata(String MID);
 

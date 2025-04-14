@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import lombok.Data;
 
+
 @Data
 @Repository("membership_dto")
 public class membership_dto {

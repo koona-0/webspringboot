@@ -10,8 +10,12 @@ import jakarta.annotation.Resource;
 
 @Service
 //컨트롤러에서 사용하는 방법 두가지
-//1. 레포지토리 리소스 이용
+//1. 레포지토리 리소스 이용 : Controller @Resource로 로드 
 //2. 오토와이어드 이용 
+
+//JPA => @Service 위주로 사용	//@Repository와 @JPARepository가 충돌 
+//JPA => @Repository 무조건 사용하고 싶을 경우 class extends 하여 제공 
+
 @Repository("membership_service2")
 public class membership_service2 {
 	
