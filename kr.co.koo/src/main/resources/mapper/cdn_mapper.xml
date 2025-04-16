@@ -4,8 +4,37 @@
 
 <!-- 파라미터값 잘 확인하기 -->
 <insert id="cdn_insert" parameterType="kr.co.koo.file_DTO">
-INSERT INTO API_IMG (ORI_FILE,NEW_FILE,API_FILE,FILE_URL,FILE_DATE) 
-VALUES (#{ORI_FILE},#{NEW_FILE},#{API_FILE},#{FILE_URL},SYSDATE)
+INSERT INTO API_IMG (ORI_FILE,NEW_FILE,API_FILE,FILE_URL,FILE_BIN,FILE_DATE) 
+VALUES (#{ORI_FILE},#{NEW_FILE},#{API_FILE},#{FILE_URL},#{FILE_BIN},SYSDATE)
 </insert>
+<!-- 버전마다 BLOB 사용방법이 오라클 g/c와 마이바티스의 버전 2점대와 3점대 다름 : c는 그냥 이렇게 쓰면 됨 -->
+
+<!-- 맵퍼끼리 이름은 같게, 서비스는 달라도 됨 -->
+
+<!-- 비슷한 쿼리문 많으면 매퍼, 서비스파일 좀 고치더라도 if, choose when 등 사용하여 만들기! -->
+<select id="cdn_select" resultType="kr.co.koo.file_DTO" parameterType="Map">
+select * from API_IMG 
+<if test="part==1">
+where AIDX=#{AIDX} order by AIDX desc
+</if>
+<if test="part==2">
+order by AIDX desc
+</if>
+<!-- part3 
+사용자가 업로드한 파일명으로 검색  
+mysql에서는 concat사용 -->
+<if test="part==3">
+where ORI_FILE like '%' || #{word} || '%' order by AIDX desc
+</if>
+
+</select>
+
+<select id="cdn_images" resultType="kr.co.koo.file_DTO" parameterType="String">
+select FILE_URL from API_IMG where API_FILE=#{APINO}
+</select>
+
+<delete id="cdn_delete" parameterType="String">
+delete from API_IMG where AIDX=#{AIDX}
+</delete>
 
 </mapper>

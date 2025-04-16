@@ -7,6 +7,9 @@ import java.util.Date;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
+import org.apache.commons.net.ftp.FTPFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +18,8 @@ import jakarta.annotation.Resource;
 
 @Repository("cdn_model")
 public class cdn_model {
+	Logger log = LoggerFactory.getLogger(this.getClass());
+	
 	//FTP 정보를 외부에서 수정하지 못하게 설정
 	final String user = "testuser";
 	final String pass = "a10041004!";
@@ -50,7 +55,10 @@ public class cdn_model {
 				//FTP 디렉토리 경로를 설정 후 해당 파일을 Byte로 전송 
 				this.result = this.fc.storeFile("/koona0/"+new_file, files.getInputStream());
 				
-				System.out.println(files.getOriginalFilename());
+//				System.out.println(files.getOriginalFilename());
+
+				//Oracle : CLOB(Ascii), BLOB(Binary)
+				this.file_DTO.setFILE_BIN(files.getBytes());
 				
 				//DB 저장 
 				this.file_DTO.setORI_FILE(files.getOriginalFilename());
@@ -101,5 +109,110 @@ public class cdn_model {
 		String new_file = day + no + type;
 		return new_file;
 	}
+	
+	// CDN Server에 있는 해당 파일을 삭제하는 역할 model
+	public boolean cdn_ftpdel(String newfiles, String idx) throws Exception {
+		this.fc = new FTPClient();
+		this.fcc = new FTPClientConfig();
+		this.fc.configure(this.fcc);
+		this.fc.connect("kbsn.or.kr", this.port);
+		this.fc.enterRemotePassiveMode(); // 패시브모드로 전환 (FTP 접속환경)
+		// PassiveMode : 가상 포트를 이용하여 연결을 설정
+		
+		//this.fc.removeDirectory("/koona0");	//디렉토리 통째로 삭제 
+		//this.fc.makeDirectory("/koona1");		//디렉토리 생성 (오늘날짜의 폴더 만들기같은거)
+		
+		//removeDirectory : 디렉토리 삭제 
+		//makeDirectory : 디렉토리 생성
+		// deleteFile : FTP에 접속된 서버에서 해당 경로에 있는 파일을 삭제하는 class
+		
+        /*
+        //기존 에러발생 코드 
+		this.fc.deleteFile("/koona0/" + newfiles);
+		
+		if(this.result ==true) {	//정상적으로 FTP 파일을 삭제 한 후 
+			int r = this.cs.cdn_delete(idx);
+		}
+		*/
+
+		if (this.fc.login(this.user, this.pass)) { // 로그인
+
+			// 파일 존재하는지 확인
+			if (isFileExistsOnFtp(newfiles)) { // 파일이 ftp에 있으면
+				this.result = this.fc.deleteFile("/koona0/" + newfiles); // ftp에서 삭제
+
+				if (this.result) {	//ftp에서 삭제됐으면 
+					int r = this.cs.cdn_delete(idx);	//db에서 삭제 
+					if (r > 0) {
+						this.result = true;
+					} else {
+						this.result = false;
+					}
+				}
+			}
+
+			else { // 파일이 ftp에 없으면
+				int r = this.cs.cdn_delete(idx); // DB에서 삭제
+				if (r > 0) {
+					this.result = true;
+				} else {
+					this.result = false;
+				}
+			}
+
+		}
+
+		return this.result;
+	}
+	
+	// FTP Server에 해당 파일이 있는지 확인하는 메소드
+	public boolean isFileExistsOnFtp(String filePath) throws Exception {
+	    FTPClient tempFc = new FTPClient();
+	    FTPClientConfig tempFcc = new FTPClientConfig();
+	    tempFc.configure(tempFcc);
+	    tempFc.connect("kbsn.or.kr", this.port);
+	    boolean exists = false;
+
+	    try {
+	        if (tempFc.login(this.user, this.pass)) {
+	            tempFc.enterLocalPassiveMode(); // 또는 tempFc.enterRemotePassiveMode(); 환경에 따라 선택
+	            FTPFile[] files = tempFc.listFiles("/koona0/");
+	            if (files != null) {
+	                for (FTPFile file : files) {
+	                    if (file.isFile() && file.getName().equals(filePath)) {
+	                        exists = true;
+	                        break;
+	                    }
+	                }
+	            }
+	            tempFc.logout();
+	        }
+	    } catch (Exception e) {
+	        log.error("FTP 파일 존재 확인 오류: {}", e.getMessage());
+	        throw e;
+	    } finally {
+	        if (tempFc.isConnected()) {
+	            try {
+	                tempFc.disconnect();
+	            } catch (Exception e) {
+	                log.error("FTP 연결 종료 오류: {}", e.getMessage());
+	            }
+	        }
+	    }
+	    return exists;
+	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
