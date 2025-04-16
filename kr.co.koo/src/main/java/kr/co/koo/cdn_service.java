@@ -15,5 +15,4 @@ public class cdn_service {
 		return result;
 	}
 	
-	
 }

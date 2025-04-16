@@ -45,10 +45,7 @@ public class cdn_controller {
 			
 		}
 		
-		
-		
 		return null;
 	}
-	
 	
 }
