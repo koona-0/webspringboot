@@ -16,4 +16,7 @@ public interface cdn_mapper {
 	
 	// 데이터베이스 데이터 삭제 
 	int cdn_delete(String AIDX);
+	
+	/*  AOP 로그 저장 테이블  */
+	public int log_table(String mid);
 }

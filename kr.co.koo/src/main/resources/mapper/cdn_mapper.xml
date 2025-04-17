@@ -37,4 +37,14 @@ select FILE_URL from API_IMG where API_FILE=#{APINO}
 delete from API_IMG where AIDX=#{AIDX}
 </delete>
 
+<!-- AOP 로그 테이블 -->
+<insert id="log_table" parameterType="String">
+insert into LOG_TABLE (MID,MTODAY) values (#{mid}, SYSDATE)
+</insert>
+
+
+
+
+
+
 </mapper>

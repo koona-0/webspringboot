@@ -34,8 +34,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class cdn_controller {
 
-//    private final koo.main_controller main_controller;
-	
 	Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	@Resource(name="file_DTO")

@@ -203,16 +203,3 @@ public class cdn_model {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

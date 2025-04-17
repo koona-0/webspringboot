@@ -46,5 +46,10 @@ public class cdn_service {
 		return result;
 	}
 	
+	/*  AOP 로그 저장 테이블  */
+	public int log_table(String mid) {
+		int result = this.mp.log_table(mid);
+		return result;
+	}
 
 }
