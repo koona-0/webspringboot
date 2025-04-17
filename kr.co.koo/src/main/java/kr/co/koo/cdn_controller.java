@@ -1,6 +1,9 @@
 package kr.co.koo;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,6 +12,7 @@ import java.net.URL;
 //import java.sql.ResultSet;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 //CDN 전용 컨트롤러 
 @Controller
@@ -91,10 +96,19 @@ public class cdn_controller {
 	//3. 사용자가 페이지 번호를 누를 경우 
 	@GetMapping("/cdn/cdn_filelist.do")
 	public String cdn_filelist(
-			@RequestParam(name="word", required = false) String word,
+			@RequestParam(name="word", required = false, defaultValue = "") String word,
 			Model m){
+		List<file_DTO> all = null;
 		
-		List<file_DTO> all = this.cs.all(2, this.file_DTO);	//part 2로 보냄 => 전체리스트   
+		if(word.equals("")) {	//검색어가 없을 경우 
+			all = this.cs.all(2, this.file_DTO);	//part 2로 보냄 => 전체리스트   
+			
+		} else {				//검색어가 있을 경우 
+			this.file_DTO.setWord(word);	//setter로 DTO에 값을 이관 
+			all = this.cs.all(3, this.file_DTO);	//part 3으로 보냄 => 검색   
+			
+		}
+		
 		m.addAttribute("all", all);
 		
 		return null;
@@ -160,6 +174,62 @@ public class cdn_controller {
 		}
 
 		return "redirect:/cdn/cdn_filelist.do";
+	}
+	
+	/* 방법1 
+	@GetMapping("/cdn/download.do")
+	public void downloads(@RequestParam(name="filenm") String filenm,
+			HttpServletResponse res
+			) throws Exception {
+		
+		
+		// ftp:// 이런 URL 일때 사용 
+		// 외부에서 이미지 및 파일, 동영상을 FTP URL로 읽어서 byte로 변환시 무조건 File 객체 이용
+		//File f = new File(filenm);	//FTP 경로를 로드한 후에 byte로 변환 
+		//byte[] files = FileUtils.readFileToByteArray(f.gets);
+		
+		
+		URL url = new URL(filenm);
+		HttpURLConnection httpcon = (HttpURLConnection)url.openConnection();
+		InputStream is = new BufferedInputStream(httpcon.getInputStream());
+		byte[] files = is.readAllBytes();
+//		this.log.info(files.toString());
+		res.setHeader("content-transfer-encoding", "binary");
+		res.setContentType("application/x-download");
+		OutputStream os = res.getOutputStream();
+		IOUtils.copy(is,  os);
+		os.flush();
+		os.close();
+		is.close();
+		
+	}
+	*/
+	
+	
+	//방법 2
+	//사용자가 해당 파일을 클릭시 파일을 자신의 PC, Mobile에 다운로드할 수 있는 API 메소드 
+	@GetMapping("/cdn/download.do/{filenm}")
+	public void downloads(@PathVariable (name="filenm") String filenm,
+			HttpServletResponse res
+			) throws Exception {
+		
+		//서버 경로에 맞는 파일을 로드 
+		URL url = new URL("http://kbsn.or.kr/koona0/" + filenm);
+		//http
+		HttpURLConnection httpcon = (HttpURLConnection)url.openConnection();
+		//해당 경로에 이미지를 byte 읽어들임 
+		InputStream is = new BufferedInputStream(httpcon.getInputStream());
+		//해당 Controller에서 파일을 다운로드 받을 수 있도록 처리 
+		res.setHeader("content-transfer-encoding", "binary");
+		res.setContentType("application/x-download");
+		
+		OutputStream os = res.getOutputStream();	//파일을 저장할 수 있도록 설정 
+		IOUtils.copy(is, os);	//서버에 있는 값을 PC로 복제 
+		
+		os.flush();
+		os.close();
+		is.close();
+		
 	}
 	
 	// mysql data 로드

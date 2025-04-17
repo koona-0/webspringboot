@@ -12,4 +12,9 @@ public class file_DTO {
 	byte[] FILE_BIN;	
 	//BLOB 자료형은 binary라서 byte에 저장 (오라클에는 있고 mysql에는 없음)
 	//BLOB, CLOB : 다운로드를 위한 구조
+	
+	/*----------------------------------*/
+	
+	//검색을 위한 변수 get,set
+	String word;
 }

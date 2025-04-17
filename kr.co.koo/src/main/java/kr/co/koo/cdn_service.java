@@ -19,9 +19,16 @@ public class cdn_service {
 	}
 
 	public List<file_DTO> all(Integer part, file_DTO dto) {
-		Map<String, Integer> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("part", part);
-		map.put("AIDX", dto.getAIDX());
+		
+		if(part == 1) {			//고유값으로 해당하는 데이터만 찾는 경우 
+			map.put("AIDX", dto.getAIDX());
+		}else if(part == 3) {	//검색어로 데이터를 찾는 경우 
+			map.put("word", dto.getWord());
+		}
+		
+		
 		System.out.println(map);
 
 		List<file_DTO> result = this.mp.cdn_select(map);
@@ -33,9 +40,11 @@ public class cdn_service {
 		return result;
 	}
 	
+	
 	int cdn_delete(String AIDX) {
 		int result = this.mp.cdn_delete(AIDX);
 		return result;
 	}
+	
 
 }
