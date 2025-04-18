@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!-- Thymeleaf는 무조건 마크업 기준으로 fragment를 설정하여 가져옴 -->
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="~{/index.html :: title}"></head>
+<body>
+<header th:replace="~{/index.html :: top}"></header>
+
+<form id="frm" method="get" action="./search_shop.do" onsubmit="return checks()">
+<!-- ${menulist} : Controller에서 Model로 보낸 값을 받아서 index.html에 매개변수 값을 전송  -->
+<nav th:replace="~{/index.html :: menu(${menulist})}"></nav>
+</form>
+<section th:replace="~{/index.html :: banner}"></section>
+<article th:replace="~{/index.html :: product}"></article>
+<footer th:replace="~{/index.html :: footer}"></footer>
+</body>
+<script>
+function checks(){
+	if(frm.q.value==""){
+		alert("검색어를 입력하세요");
+		return false;
+	}else{
+		frm.submit();
+	}
+}
+</script>
+</html>

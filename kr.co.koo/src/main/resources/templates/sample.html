@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Thymeleaf 샘플 파일</title>
+
+<!-- 
+Thymeleaf : HTML 태그 기준으로 Layout을 설정하므로 마크업이 중요
+th : Thymeleaf를 사용한다는 tag이며, fragment : 가상의 이름(영역처리를 담당하는 역할) 
+
+fragment : 같은 이름을 사용할 수 있음 단, 동일한 이름이 발생한 경우 해당 HTML Tag를 모두 가져옴 
+-->
+
+<style th:fragment="styles">
+.a {
+	width: 100%;
+	height: 100px;
+	background-color: #F1E7E7;
+}
+
+.b {
+	width: 100%;
+	height: 100px;
+	background-color: #FFD0C7;
+}
+
+.c {
+	width: 100%;
+	height: 200px;
+	background-color: #E69DB8;
+}
+</style>
+</head>
+<body>
+	<!-- th:fragment : 매개변수로 값을 이관받아서 해당 HTML에 JSTL변수처럼 출력하게 됨 -->
+	<header class="a" th:fragment="top(aa)">
+	<!-- 
+	th:text : Controller에서 Model러 생성된 키명을 출력 (JSTL과 동일)
+	 -->
+		<ul>
+			<li th:text="${aa}"></li>
+			<li>거래처 등록</li>
+			<li>외부 창고 입고</li>
+			<li>외부 창고 출고</li>
+		</ul>
+	</header>
+	<main th:fragment="main">
+		<section class="b">
+			<div th:text="${product}"></div>
+			<div>거래처 등록 리스트</div>
+			<div>거래처 등록 추가</div>
+		</section>
+	</main>
+	<footer class="c" th:fragment="copy(copyright)">
+		<div th:text="${copyright}"></div>
+	</footer>
+</body>
+</html>
