@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>상품구매 - pay1</title>
+</head>
+<script>
+
+</script>
+<body>
+
+<!-- th:object 사용시 setter에 값을 입력시켜서 Thymeleaf에 th:value로 출력 -->
+<form id="frm" method="post" th:action="${act_url}" th:object="${dto}">
+상품코드 : <input type="text" th:field="${dto.product_code}" th:value="${rd}" readonly><br>
+상품명 : <input type="text" th:field="${dto.product_nm}"><br>
+상품금액 : <input type="text" th:field="${dto.product_money}" th:value="${dto.product_money}" readonly ><br>
+
+상품수량 : <select th:field="${dto.product_ea}" onchange="ea_list(this.value)">
+<option value="1">1EA</option>
+<option value="2">2EA</option>
+<option value="3">3EA</option>
+</select>
+<br>
+총 결제금액 : <input type="text" readonly th:value="1000" th:field="${dto.price}"><br>
+<input type="button" value="상품구매확정" onclick="basket()">
+</form>
+
+
+
+</body>
+<script>
+function ea_list(ea){		//상품 갯수에 맞춰서 상품금액 * 수량 => 실제 결제할 금액 변동
+	var total = frm.product_money.value * ea;
+	frm.price.value = total;
+	console.log(ea);
+}
+function basket(){
+	if(frm.product_nm.value==""){
+		alert("상품명 넣어")
+	}else{
+		frm.submit();
+	}
+}
+</script>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>고객정보 및 결제자 - pay2</title>
+</head>
+<body>
+
+<form id="frm" method="post" action="./pay3.do" th:object="${pd}">
+<!-- 이니시스가 필요한 네임 -->
+<!-- 상품코드, 상품명, 상품개수, 상품가격, 결제금약 -->
+<input type="hidden" name="goodcode" th:value="${pd.product_code}">
+<input type="hidden" name="goodname" th:value="${pd.product_nm}">
+<input type="hidden" name="goodea" th:value="${pd.product_ea}">
+<input type="hidden" name="goodprice" th:value="${pd.product_money}">
+<input type="hidden" name="price" th:value="${pd.price}">
+
+상품코드 : [[${pd.product_code}]]<br>
+상품명 : [[${pd.product_nm}]]<br>
+상품개수 : [[${pd.product_ea}]]EA<br>
+상품가격 : [[${#numbers.formatInteger(pd.product_money,0,'COMMA')}]]<br>
+결제금액 : [[${#numbers.formatInteger(pd.price,0,'COMMA')}]]<br>
+
+고객명 : <input type="text" name="buyername" value="구나영"><br>
+연락처 : <input type="text" name="buyertel" value="01062999619"><br>
+이메일 : <input type="text" name="buyeremail" value="nayoung9909@naver.com"><br>
+우편번호 : <input type="text" name="rec_post" value="04104"><br>
+도로명주소 : <input type="text" name="rec_way" value="서울 마포구 신촌로 176"><br>
+상세주소 : <input type="text" name="rec_addr" value="402호"><br>
+결제방식 : <input type="radio" name="gopaymethod" value="CARD" checked>신용카드<br>
+<input type="radio" name="gopaymethod" value="DirectBank">계좌이체<br>
+<input type="radio" name="gopaymethod" value="VBank">가상계좌<br>
+<input type="button" value="결제요청" onclick="paygo()"><br>
+
+</form>
+
+</body>
+<script>
+function paygo(){
+	
+	frm.submit();
+}
+</script>
+</html>

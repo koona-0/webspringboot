@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- 외부 스크립트를 이용하여 해당 외부 서버에 정보값을 전달 및 저장 -->
+<title>결제 API 연동 및 결제 확정</title>
+<script src="https://stgstdpay.inicis.com/stdjs/INIStdPay.js"></script>
+</head>
+<body>
+<form id="frm">
+<!-- API 버전 -->
+<input type="hidden" name="version" value="1.0">
+<!-- 결제 수단 -->
+<input type="hidden" name="gopaymethod" th:value="${pd.gopaymethod}">
+<!-- 결제 대행 회사의 가입 아이디 -->
+<input type="hidden" name="mid" th:value="${mid}">
+<!-- 상품 코드 및 아이디를 결합한 값 (전표의 고유값으로 출력) -->
+<input type="hidden" name="oid" th:value="${orderNumber}">
+<!-- 최종 결제 금액 (숫자만 2,000X) -->
+<input type="hidden" name="price" th:value="${pd.price}">
+<!-- 결제를 진행한 시간 -->
+<input type="hidden" name="timestamp" th:value="${timestamp}">
+<!-- 결제 정보에 대한 보안코드(암호화) -->
+<input type="hidden" name="signature" th:value="${signature}">
+<!-- 결제 비밀번호 -->
+<input type="hidden" name="mKey" th:value="${mKey}">
+<!-- 결제 금액 단위 -->
+<input type="hidden" name="currency" value="WON">
+<!-- 결제자. 연락처, 이메일, 상품명, 우편번호, 도로명주소, 상세주소  -->
+<input type="hidden" name="buyername" th:value="${pd.buyername}">
+<input type="hidden" name="buyertel" th:value="${pd.buyertel}">
+<input type="hidden" name="buyeremail" th:value="${pd.buyeremail}">
+<input type="hidden" name="goodname" th:value="${pd.goodname}">
+<input type="hidden" name="rec_post" th:value="${pd.rec_post}">
+<input type="hidden" name="rec_way" th:value="${pd.rec_way}">
+<input type="hidden" name="rec_addr" th:value="${pd.rec_addr}">
+<!-- 0000결제성공 그외 실패코드 -->
+<input type="hidden" name="returnUrl" value="http://localhost:8080/return_url.jsp">
+<!-- 결제종료 및 결제취소 -->
+<input type="hidden" name="closeUrl" value="http://localhost:8080/close.jsp">
+<p>상품정보</p>
+상품코드 : <span th:text="${pd.goodcode}"></span><br>
+상품명 : <span th:text="${pd.goodname}"></span><br>
+상품갯수 : <span>[[${pd.goodea}]]</span>EA<br>
+결제자명 : <span>[[${pd.buyername}]]</span><br>
+연락처 : <span>[[${pd.buyertel}]]</span><br>
+이메일 : <span>[[${pd.buyeremail}]]</span><br>
+<p>--------------------</p>
+최종 결제금액 : <span>[[${pd.price}]]</span><br>
+결제수단 : <span>[[${pd.gopaymethod}]]</span><br>
+<input type="button" value="결제하기" onclick="paygo()">
+</form>
+</body>
+<script>
+function paygo(){
+	INIStdPay.pay("frm");
+}
+</script>
+
+
+
+
+
+</html>

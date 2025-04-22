@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Thymeleaf 전체 구문 중급언어(Controller => Form 적용방식)</title>
+</head>
+<body>
+
+<!-- 
+Form 전용
+th:action : @{경로} 또는 Controller의 ${변수}로 적용시키는 방법 
+th:object : DTO, VO를 이용하여 th:field와 함께 사용
+th:field : name, id, value 를 DTO, VO에 맞게 자동생성 
+ -->
+
+<!-- 
+   <form id="frm" method="post" th:actipn="@{/abc/thy.do}" th:object="${result}">
+ -->
+   <form id="frm" method="post" th:actipn="${act_url}" th:object="${result}">
+      아이디 : <input type="text" name="aa"><br>
+      데이터값 : <input type="text" th:field="${result.mid}" ><br>
+      데이터값 : <input type="text" th:field="${result.mpass}"><br>
+      데이터값 : <input type="text" th:field="*{memail}"><br>
+      <input type="button" value="전송" onclick="abc()">
+   </form>
+   <br><br>
+<!-- 금액 포멧 3자리마다 콤마찍힘  
+  #numbers.formatInteger : 문자 데이터를 숫자로 변환, 소수일경우 반올림함 (그래서 round없음)
+  #numbers.formatDecimal : 소수를 표현하는 속성 (데이터값,최소 정수자리, 최소 소수 자릿수)
+  							'COMMA'옵션 사용시 .대신 ,로 표시 
+-->
+최종 결제 금액 : <span th:text="${#numbers.formatInteger(money,0,'COMMA')}"></span><br>
+최종 결제 금액 : <span th:text="${#numbers.formatInteger(money2,0,'COMMA')}"></span><br>
+최종 결제 금액 : <span th:text="${#numbers.formatDecimal(money2,3,1)}"></span><br>
+최종 결제 금액 : <span th:text="${#numbers.formatDecimal(money2,3,2,'COMMA')}"></span><br>
+<br><br>
+ 
+<!-- max, min : 최대 최소값을 비교하여 가져올 수 있음 -->
+<em th:with="maxno = ${T(java.lang.Math).max(5,10)}">
+<span>[[${maxno}]]</span>
+</em>
+ 
+</body>
+<script>
+function abc(){
+	if(frm.mid.value==""){
+		alert("데이터값을 입력하세요");
+	}else{
+   frm.submit();
+		
+	}
+	
+}
+</script>
+</html>
