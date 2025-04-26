@@ -4,7 +4,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -219,6 +222,59 @@ public class main_controller {
 		}
 		
 		return img;		//<img src="">태그로 해당 API 경로 및 파일명 사용시 이미지 출력 
+	}
+	
+/*===========*/	
+	
+	//ajax.jsp와 함께 사용하는 API 통신
+	//FormDatam, Form태그 => Get, Post만 가능   
+	@PostMapping("/ajax.do")
+	public String ajax(@RequestParam("product") String product,
+			@RequestHeader("mkey") String mkey ,
+			HttpServletResponse res
+			) throws Exception {
+		this.pw = res.getWriter();
+		
+		//얘는 맵핑에 주소뒤에 {}로 키를 못넣으니까 헤더를 이용해서 보안키 적용
+		this.log.info(mkey);		//API 접근에 대한 보안키 (a123456)
+		
+		if(mkey.equals("a123456")) {	//== 사용시 에러발생 
+			this.log.info(product);
+			this.pw.print("ok");
+		}else {
+			this.pw.print("key Error");
+		}
+		
+		return null;
+	}
+	
+	@Autowired
+	api_service asv;
+	
+	@CrossOrigin(origins = "*", allowedHeaders = "*")
+	@PostMapping("/ajax2.do")
+	public String ajax2(HttpServletResponse res,
+			@RequestParam(name="CID") String CID,
+			@RequestParam(name="CNAME") String CNAME
+			) throws Throwable{
+		this.pw = res.getWriter();
+		this.log.info(CNAME);
+		this.log.info(CID);
+		
+		Map<String,String> all = new HashMap<>();
+		all.put("CID", CID);
+		all.put("CNAME", CNAME);
+		
+		int result = this.asv.insert_cms(all);
+		
+		if(result > 0) {
+			this.pw.print("ok");
+		}else {
+			this.pw.print("no");
+		}
+		this.pw.close();
+		
+		return null;
 	}
 	
 }
